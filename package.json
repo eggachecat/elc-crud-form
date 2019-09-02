@@ -1,0 +1,24 @@
+{
+  "name": "elc-crud-form",
+  "version": "0.0.1",
+  "bin": {
+    "create-elc-crud-form": "bin/create-elc-crud-form.js"
+  },
+  "files": [
+    "bin",
+    "examples"
+  ],
+  "scripts": {
+    "start": "babel-node --presets es2015 ./bin/create-elc-crud-form.js"
+  },
+  "author": "eggahecat <sunao_0626@hotmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5"
+  },
+  "dependencies": {
+    "babel-node": "0.0.1-security"
+  }
+}
