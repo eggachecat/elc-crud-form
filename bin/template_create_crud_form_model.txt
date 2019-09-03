@@ -15,7 +15,7 @@ export default {
     total: 0,
   },
   effects: {
-    *fetch%{__ELC_CRUD__NAME}%({ payload }, { call, put }) {
+    *fetch%{__ELC_CRUD__NAME}%List ({ payload }, { call, put }) {
       if (payload.building_id) {
         const response = yield call(retrive%{__ELC_CRUD__NAME}%List, payload);
         console.log('response', response);

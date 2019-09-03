@@ -44,7 +44,7 @@ const TAG_DICT = %{__ELC_CRUD__TAG_DICT}%;
 const BADGE_DICT = %{__ELC_CRUD__BADGE_DICT}%;
 
 
-function CreateOrUpdateForm(props) {
+function %{__ELC_CRUD__VARIABLE_FORM}%(props) {
     const {
         form: { getFieldDecorator },
         current,
@@ -57,7 +57,7 @@ function CreateOrUpdateForm(props) {
     );
 }
 
-const WrappedCreateOrUpdateForm = Form.create()(CreateOrUpdateForm);
+const Wrapped%{__ELC_CRUD__VARIABLE_FORM}% = Form.create()(%{__ELC_CRUD__VARIABLE_FORM}%);
 
 /* eslint react/no-multi-comp:0 */
 @connect(({ %{__ELC_CRUD__MODEL}%, setting, loading }) => ({
@@ -82,7 +82,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
 
     constructor(props) {
         super(props);
-        this.%{__ELC_CRUD__VARIABLE_FORM}% = React.createRef();
+        this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref = React.createRef();
         this.onUpdate = this.onUpdate.bind(this);
     }
 
@@ -103,7 +103,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
             setting: { selectedBuildingId },
         } = this.props;
         const { current } = this.state;
-        const form = this.wrappedCreateOrUpdateFormRef.current;
+        const form = this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref.current;
         const self = this;
         form.validateFields((err, fieldsValue) => {
             if (err) return;
@@ -178,7 +178,20 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         } = this.props;
         return (
             <Form onSubmit={this.onSearch} layout="inline">
-                %{__ELC_CRUD__SEARCH_FORM}%
+                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                    %{__ELC_CRUD__SEARCH_FORM}%
+                    <Col md={6} sm={24}>
+                        <span>
+                            <Button type="primary" onClick={this.onSearch}>
+                                {formatMessage({ id: 'common.search' })}
+                            </Button>
+                            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                                {formatMessage({ id: 'common.reset' })}
+                            </Button>
+                        </span>
+                    </Col>
+                </Row>
+
                 <Button
                     icon="plus"
                     type="primary"
@@ -207,8 +220,8 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         return (
             <GridContent>
                 <Card bordered={false}>
-                    <div className={styles.tableList}>
-                        <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
+                    <div>
+                        <div>{this.renderSimpleForm()}</div>
                         <Table
                             loading={loading}
                             dataSource={data}
@@ -235,9 +248,9 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                         this.onUpdate();
                     }}
                 >
-                    <WrappedCreateOrUpdateForm
+                    <Wrapped%{__ELC_CRUD__VARIABLE_FORM}%
                         current={current}
-                        ref={this.wrappedCreateOrUpdateFormRef}
+                        ref={this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref}
                     />
                 </Modal>
             </GridContent>
