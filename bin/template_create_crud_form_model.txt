@@ -1,0 +1,51 @@
+import {
+    create%{__ELC_CRUD__NAME}%,
+    update%{__ELC_CRUD__NAME}%,
+    retrive%{__ELC_CRUD__NAME}%List,
+    delete%{__ELC_CRUD__NAME}%,
+} from '@/services/api-%{__ELC_CRUD__API_NAME}%';
+import { message } from 'antd';
+import { formatMessage } from 'umi-plugin-react/locale';
+
+export default {
+  namespace: '%{__ELC_CRUD__MODEL}%',
+  state: {
+    list: [],
+    page: 0,
+    total: 0,
+  },
+  effects: {
+    *fetch%{__ELC_CRUD__NAME}%List ({ payload }, { call, put }) {
+      if (payload.building_id) {
+        const response = yield call(retrive%{__ELC_CRUD__NAME}%List, payload);
+        console.log('response', response);
+        yield put({
+          type: 'setList',
+          payload: {
+            response: response.data,
+          },
+        });
+      }
+    },
+    *update%{__ELC_CRUD__NAME}%({ payload, onSuccess }, { call, put }) {
+      const response = yield call(update%{__ELC_CRUD__NAME}%, payload);
+      onSuccess && onSuccess();
+      message.success(formatMessage({ id: 'message.success-create' }));
+    },
+    *create%{__ELC_CRUD__NAME}%({ payload, onSuccess }, { call, put }) {
+      const response = yield call(create%{__ELC_CRUD__NAME}%, payload);
+      onSuccess && onSuccess();
+      message.success(formatMessage({ id: 'message.success-update' }));
+    },
+  },
+  reducers: {
+    setList(state, action) {
+      return {
+        ...state,
+        list: action.payload.response.results,
+        page: action.payload.response.page_count,
+        total: action.payload.response.count,
+      };
+    },
+  },
+};

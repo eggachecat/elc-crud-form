@@ -1,0 +1,291 @@
+import React, { PureComponent, Fragment } from 'react';
+import { connect } from 'dva';
+import moment from 'moment';
+import {
+    Row,
+    Col,
+    Card,
+    Form,
+    Input,
+    Select,
+    Icon,
+    Button,
+    DatePicker,
+    Modal,
+    message,
+    Divider,
+    Steps,
+    Table,
+    Upload,
+    Popconfirm,
+    Tag,
+    Badge,
+    Spin,
+    Descriptions,
+    Dropdown,
+    Menu,
+    Pagination,
+} from 'antd';
+
+import { formatMessage } from 'umi-plugin-react/locale';
+import ReactEcharts from 'echarts-for-react';
+import { cloneDeep } from 'lodash';
+import GridContent from '@/components/PageHeaderWrapper/GridContent';
+import ELCBuildingResponsive from '@/components/ELCBuildingResponsive';
+import styles from './%{__ELC_CRUD__NAME}%.less';
+
+const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
+
+const FormItem = Form.Item;
+const { Step } = Steps;
+const { Option } = Select;
+const InputGroup = Input.Group;
+
+const TAG_DICT = %{__ELC_CRUD__TAG_DICT}%;
+const BADGE_DICT = %{__ELC_CRUD__BADGE_DICT}%;
+
+
+function %{__ELC_CRUD__VARIABLE_FORM}%(props) {
+    const {
+        form: { getFieldDecorator },
+        current,
+    } = props;
+
+    return (
+        <Form>
+            %{__ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS}%
+        </Form>
+    );
+}
+
+const Wrapped%{__ELC_CRUD__VARIABLE_FORM}% = Form.create()(%{__ELC_CRUD__VARIABLE_FORM}%);
+
+/* eslint react/no-multi-comp:0 */
+@connect(({ %{__ELC_CRUD__MODEL}%, setting, loading }) => ({
+    %{__ELC_CRUD__MODEL}%,
+    setting,
+    loading: loading.effects['%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List']
+}))
+@Form.create()
+%{__ELC_CRUD__BUILDING_RESPONSIVE}%
+class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
+    state = {
+        createOrUpdateModalVisible: false,
+        current: {},
+        pageSize: 3,
+        page: 1,
+    };
+
+    // 这就是基本上每一列的渲染方式 请折叠
+    columns = [
+        %{__ELC_CRUD__COLUMNS}%
+        {
+            key: 'operation',
+            render: (text, record) => (
+                <div onClick={e => e.stopPropagation()}>
+                <Dropdown
+                    overlay={
+                        <Menu>
+                            <Menu.Item
+                            key="update"
+                            onClick={e => {
+                                console.log('update', record);
+                                this.setState({
+                                    current: cloneDeep(record),
+                                    createOrUpdateModalVisible: true,
+                                });
+                            }}
+                            >
+                            {formatMessage({ id: 'common.update' })}
+                            </Menu.Item>
+                        </Menu>
+                    }
+                >
+                    <a>
+                    {formatMessage({ id: 'common.action' })} <Icon type="down" />
+                    </a>
+                </Dropdown>
+                </div>
+            ),
+        },
+    ];
+
+    constructor(props) {
+        super(props);
+        this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref = React.createRef();
+        this.onUpdate = this.onUpdate.bind(this);
+    }
+
+    componentDidMount() {
+        const {
+            setting: { selectedBuildingId },
+        } = this.props;
+        this.onBuildingChange(selectedBuildingId);
+    }
+
+    onBuildingChange(selectedBuildingId) {
+        this.fetch%{__ELC_CRUD__NAME}%List();
+    }
+
+    onUpdate() {
+        const {
+            dispatch,
+            setting: { selectedBuildingId },
+        } = this.props;
+        const { current } = this.state;
+        const form = this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref.current;
+        const self = this;
+        form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            console.log('fieldsValue', fieldsValue);
+
+            function onSuccess() {
+                self.fetch%{__ELC_CRUD__NAME}%List();
+                form.resetFields();
+                self.setState({ createOrUpdateModalVisible: false, current: {} });
+            }
+
+            if (current.id) {
+                dispatch({
+                    type: '%{__ELC_CRUD__MODEL}%/updateContact',
+                    payload: { ...fieldsValue, building_id: selectedBuildingId, id: current.id },
+                    onSuccess,
+                });
+            } else {
+                dispatch({
+                    type: '%{__ELC_CRUD__MODEL}%/createContact',
+                    payload: { ...fieldsValue, building_id: selectedBuildingId },
+                    onSuccess,
+                });
+            }
+        });
+    }
+
+    handleFormReset = () => {
+        const { form } = this.props;
+        this.setState({ page: 1 });
+        form.resetFields();
+        this.fetch%{__ELC_CRUD__NAME}%List();
+    };
+
+    // 搜索的更新
+    onSearch = e => {
+        // e.preventDefault();
+        const { form } = this.props;
+        form.validateFields((err, fieldsValue) => {
+            console.log(err, fieldsValue);
+            if (err) {
+                console.log('err', err);
+            }
+            const { isactive, type } = fieldsValue;
+            this.fetch%{__ELC_CRUD__NAME}%List({
+                ...Object.keys(fieldsValue).reduce((dict, key) => {
+                    return {
+                        ...dict,
+                        ...(fieldsValue[key] !== undefined && { [key]: fieldsValue[key]}),
+                    }
+                }, {})
+            });
+        });
+    };
+
+    fetch%{__ELC_CRUD__NAME}%List(params) {
+        console.log('params', params);
+        const { dispatch } = this.props;
+        const {
+            setting: { selectedBuildingId },
+        } = this.props;
+        dispatch({
+            type: '%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List',
+            payload: { building_id: selectedBuildingId, page: this.state.page, ...params },
+        });
+    }
+
+    // 搜索的那个form
+    renderSimpleForm() {
+        const {
+            form: { getFieldDecorator },
+        } = this.props;
+        return (
+            <Form onSubmit={this.onSearch} layout="inline">
+                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                    %{__ELC_CRUD__SEARCH_FORM}%
+                    <Col md={6} sm={24}>
+                        <span>
+                            <Button type="primary" onClick={this.onSearch}>
+                                {formatMessage({ id: 'common.search' })}
+                            </Button>
+                            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                                {formatMessage({ id: 'common.reset' })}
+                            </Button>
+                        </span>
+                    </Col>
+                </Row>
+
+                <Button
+                    icon="plus"
+                    type="primary"
+                    onClick={() => {
+                        this.setState({
+                            current: {},
+                            createOrUpdateModalVisible: true,
+                        });
+                    }}
+                >
+                    {formatMessage({ id: 'common.create' })}
+                </Button>
+            </Form>
+        );
+    }
+
+    render() {
+        const {
+            loading,
+            searching,
+            %{__ELC_CRUD__MODEL}%: { list: data, total },
+        } = this.props;
+        const self = this;
+        console.log('data', data);
+        const { current } = this.state;
+        return (
+            <GridContent>
+                <Card bordered={false}>
+                    <div className={styles.tableList}>
+                        <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
+                        <Table
+                            loading={loading}
+                            dataSource={data}
+                            columns={this.columns}
+                            pagination={{
+                                pageSize: this.state.pageSize,
+                                current: this.state.page,
+                                total,
+                                onChange: v => {
+                                    this.setState({ page: v }, () => {
+                                        this.onSearch();
+                                    });
+                                },
+                            }}
+                        />
+                    </div>
+                </Card>
+                <Modal
+                    visible={this.state.createOrUpdateModalVisible}
+                    onCancel={() => {
+                        this.setState({ createOrUpdateModalVisible: false, current: {} });
+                    }}
+                    onOk={() => {
+                        this.onUpdate();
+                    }}
+                >
+                    <Wrapped%{__ELC_CRUD__VARIABLE_FORM}%
+                        current={current}
+                        ref={this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref}
+                    />
+                </Modal>
+            </GridContent>
+        );
+    }
+}
+
+export default %{__ELC_CRUD__CLASS_NAME}%;
