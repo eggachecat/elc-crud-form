@@ -1,6 +1,6 @@
 {
   "name": "elc-crud-form",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "bin": {
     "create-elc-crud-form": "./bin/elc-crud-form.js"
   },
@@ -9,8 +9,9 @@
     "examples"
   ],
   "scripts": {
-    "start": "babel-node ./src/elc-crud-form.js",
+    "start": "babel-node ./src/elc-crud-form.js c ./examples/model.json",
     "build": "babel src --out-dir bin --copy-files",
+    "test-build": "babel src --out-dir bin --copy-files && node ./bin/elc-crud-form.js c ./examples/model.json",
     "prepublish": "npm run build"
   },
   "author": "eggahecat <sunao_0626@hotmail.com>",

@@ -223,7 +223,7 @@ function ensureDirectoryExistence(filePath) {
         return filePath;
     }
     ensureDirectoryExistence(dirname);
-    fs.mkdirSync(dirname);
+    fs.mkdirSync(dirname)
     return filePath
 }
 
@@ -281,6 +281,8 @@ function generate(file) {
     const config = JSON.parse(fs.readFileSync(file).toString())
     const { configs, name, formName, folder } = config
 
+    const cwd = process.cwd()
+
     global_dict.__ELC_CRUD__NAME = `${name}` // 模型的名称: 首字母大写
     global_dict.__ELC_CRUD__MODEL = global_dict.__ELC_CRUD__NAME.toLowerCase() // 模型的model的名称
     global_dict.__ELC_CRUD__API_NAME = `api${convertToMinusCase(global_dict.__ELC_CRUD__NAME)}`
@@ -288,9 +290,7 @@ function generate(file) {
     global_dict.__ELC_CRUD__VARIABLE_FORM = `CreateOrUpdate${formName}Form`
 
     const baseFolder = folder ? folder : global_dict.__ELC_CRUD__NAME
-
-    console.log(global_dict)
-
+    console.log({ ...global_dict, baseFolder: path.resolve(baseFolder), ...config, __dirname, current_folder: cwd })
 
     global_dict.__ELC_CRUD__COLUMNS = configs.map(config => generateColumn({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
     global_dict.__ELC_CRUD__SEARCH_FORM = configs.map(config => ` 
@@ -300,23 +300,27 @@ function generate(file) {
     `).join("")
     global_dict.__ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS = configs.map(config => generateCreateOrUpdateForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
 
+    console.log("Generating page template....")
     const pageTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\pages\\${baseFolder}\\${global_dict.__ELC_CRUD__NAME}.js`)), pageTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\pages\\${baseFolder}\\${global_dict.__ELC_CRUD__NAME}.js`)), pageTemplate)
 
+    console.log("Generating model template....")
     const modelTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_model.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\pages\\${baseFolder}\\models\\${global_dict.__ELC_CRUD__MODEL}.js`)), modelTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\pages\\${baseFolder}\\models\\${global_dict.__ELC_CRUD__MODEL}.js`)), modelTemplate)
 
+    console.log("Generating api template....")
     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\services\\${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\services\\${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
 
-
+    console.log("Generating styles template....")
     const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\pages\\${baseFolder}\\${global_dict.__ELC_CRUD__NAME}.less`)), lessTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\pages\\${baseFolder}\\${global_dict.__ELC_CRUD__NAME}.less`)), lessTemplate)
 
+    console.log("Generating local template....")
     const localTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_local.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\locales\\zh-CN\\${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
-    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\locales\\en-US\\${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\locales\\zh-CN\\${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\locales\\en-US\\${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
 
 }
 
