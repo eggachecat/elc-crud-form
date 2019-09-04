@@ -285,12 +285,12 @@ function generate(file) {
 
     global_dict.__ELC_CRUD__NAME = `${name}` // 模型的名称: 首字母大写
     global_dict.__ELC_CRUD__MODEL = global_dict.__ELC_CRUD__NAME.toLowerCase() // 模型的model的名称
-    global_dict.__ELC_CRUD__API_NAME = `api${convertToMinusCase(global_dict.__ELC_CRUD__NAME)}`
+    global_dict.__ELC_CRUD__API_NAME = `${convertToMinusCase(global_dict.__ELC_CRUD__NAME)}`
     global_dict.__ELC_CRUD__CLASS_NAME = global_dict.__ELC_CRUD__NAME
     global_dict.__ELC_CRUD__VARIABLE_FORM = `CreateOrUpdate${formName}Form`
 
     const baseFolder = folder ? folder : global_dict.__ELC_CRUD__NAME
-    console.log({ ...global_dict, baseFolder: path.resolve(baseFolder), ...config, __dirname, current_folder: cwd })
+    console.log({ ...global_dict, baseFolder: baseFolder, ...config, __dirname, current_folder: cwd })
 
     global_dict.__ELC_CRUD__COLUMNS = configs.map(config => generateColumn({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
     global_dict.__ELC_CRUD__SEARCH_FORM = configs.map(config => ` 
@@ -311,7 +311,7 @@ function generate(file) {
     console.log("Generating api template....")
     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\services\\${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\services\\api${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
 
     console.log("Generating styles template....")
     const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
