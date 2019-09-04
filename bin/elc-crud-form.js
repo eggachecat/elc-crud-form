@@ -1,6 +1,10 @@
+#!/usr/bin/env node
+
 import { ELC_COLORS } from './elc-colors'
-// const fs = require('fs'),
+
 import fs from 'fs'
+import path from 'path'
+import program from 'commander'
 
 
 const global_dict = {
@@ -8,15 +12,15 @@ const global_dict = {
     __ELC_CRUD__BADGE_DICT: {},
     __ELC_CRUD__MOCK_DATA: [],
     __ELC_CRUD__MOCK_DATA_ROW: {},
-    __ELC_CRUD__NAME: `AccountManagement`, // 模型的名称: 首字母大写
-    __ELC_CRUD__MODEL: `accountmanagement`, // 模型的model的名称
-    __ELC_CRUD__API_NAME: `account-management`,
+    __ELC_CRUD__NAME: ``, // 模型的名称: 首字母大写
+    __ELC_CRUD__MODEL: ``, // 模型的model的名称
+    __ELC_CRUD__API_NAME: ``,
     __ELC_CRUD__COLUMNS: null,
     __ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS: null,// items的字符串
     __ELC_CRUD__BUILDING_MOCK_DATA: null, // mock的数据
-    __ELC_CRUD__CLASS_NAME: `AccountManagement`, // export的class的名称
+    __ELC_CRUD__CLASS_NAME: ``, // export的class的名称
     __ELC_CRUD__BUILDING_RESPONSIVE: `@ELCBuildingResponsive`, // 是否建筑响应?
-    __ELC_CRUD__VARIABLE_FORM: `CreateOrUpdateAccountForm`, // CU的modal的名称
+    __ELC_CRUD__VARIABLE_FORM: ``, // CU的modal的名称
     __ELC_CRUD__SEARCH_FORM: null, // 搜索的字段
     __ELC_CRUD__LOCALS_LOCALS: {}
 }
@@ -212,15 +216,81 @@ function fillTemplate(template) {
     }, template)
 }
 
-function test() {
-    const configs = [
-        { dataIndex: 'username', type: 'text', searchable: true, multiple: true },
-        { dataIndex: 'roles', type: 'tag', enumerates: ['0', '1'], searchable: true, multiple: true },
-        { dataIndex: 'auth', type: 'badge', enumerates: ['series', 'normal'], searchable: true, multiple: true },
-    ]
-    console.log(configs.length)
-    // console.log();
-    // console.log(configs.map(config => generateCreateOrUpdateForm({ prefix, ...config })).join(""));
+
+function ensureDirectoryExistence(filePath) {
+    var dirname = path.dirname(filePath);
+    if (fs.existsSync(dirname)) {
+        return filePath;
+    }
+    ensureDirectoryExistence(dirname);
+    fs.mkdirSync(dirname);
+    return filePath
+}
+
+
+function isUpperCase(character) {
+    return character === character.toUpperCase()
+}
+
+function convertToMinusCase(str) {
+    return str.split('').map(c => isUpperCase(c) ? `-${c.toLowerCase()}` : c).join('') // 第一个必须大写
+}
+
+
+// __dirname
+// function test() {
+//     const configs = [
+//         { dataIndex: 'username', type: 'text', searchable: true, multiple: true },
+//         { dataIndex: 'roles', type: 'tag', enumerates: ['0', '1'], searchable: true, multiple: true },
+//         { dataIndex: 'auth', type: 'badge', enumerates: ['series', 'normal'], searchable: true, multiple: true },
+//     ]
+//     console.log(configs.length)
+//     // console.log();
+//     // console.log(configs.map(config => generateCreateOrUpdateForm({ prefix, ...config })).join(""));
+
+//     global_dict.__ELC_CRUD__COLUMNS = configs.map(config => generateColumn({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
+//     global_dict.__ELC_CRUD__SEARCH_FORM = configs.map(config => ` 
+//         <Col md={6} sm={24}>
+//             ${generateSearchForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })}
+//         </Col>
+//     `).join("")
+//     global_dict.__ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS = configs.map(config => generateCreateOrUpdateForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
+
+//     console.log(global_dict.__ELC_CRUD__MOCK_DATA_ROW)
+//     const pageTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form.txt').toString());
+//     console.log(pageTemplate)
+//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.js', pageTemplate)
+
+//     const modelTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_model.txt').toString());
+//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\models\\accountmanagement.js', modelTemplate)
+
+//     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
+//     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
+//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\services\\api-account-management.js', apiTemplate)
+
+//     const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
+//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.less', lessTemplate)
+
+//     // const localTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_local.txt').toString());
+//     // fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\locales\\zh-CN\\accountmanagement.js', localTemplate)
+
+// }
+
+
+function generate(file) {
+    const config = JSON.parse(fs.readFileSync(file).toString())
+    const { configs, name, formName, folder } = config
+
+    global_dict.__ELC_CRUD__NAME = `${name}` // 模型的名称: 首字母大写
+    global_dict.__ELC_CRUD__MODEL = global_dict.__ELC_CRUD__NAME.toLowerCase() // 模型的model的名称
+    global_dict.__ELC_CRUD__API_NAME = `api${convertToMinusCase(global_dict.__ELC_CRUD__NAME)}`
+    global_dict.__ELC_CRUD__CLASS_NAME = global_dict.__ELC_CRUD__NAME
+    global_dict.__ELC_CRUD__VARIABLE_FORM = `CreateOrUpdate${formName}Form`
+
+    const baseFolder = folder ? folder : global_dict.__ELC_CRUD__NAME
+
+    console.log(global_dict)
+
 
     global_dict.__ELC_CRUD__COLUMNS = configs.map(config => generateColumn({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
     global_dict.__ELC_CRUD__SEARCH_FORM = configs.map(config => ` 
@@ -230,26 +300,34 @@ function test() {
     `).join("")
     global_dict.__ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS = configs.map(config => generateCreateOrUpdateForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
 
-    console.log(global_dict.__ELC_CRUD__MOCK_DATA_ROW)
     const pageTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form.txt').toString());
-    console.log(pageTemplate)
-    fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.js', pageTemplate)
-
+    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\pages\\${baseFolder}\\${global_dict.__ELC_CRUD__NAME}.js`)), pageTemplate)
 
     const modelTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_model.txt').toString());
-    fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\models\\accountmanagement.js', modelTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\pages\\${baseFolder}\\models\\${global_dict.__ELC_CRUD__MODEL}.js`)), modelTemplate)
 
     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
-    fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\services\\api-account-management.js', apiTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\services\\${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
+
 
     const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
-    fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.less', lessTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\pages\\${baseFolder}\\${global_dict.__ELC_CRUD__NAME}.less`)), lessTemplate)
 
-    // const localTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_local.txt').toString());
-    // fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\locales\\zh-CN\\accountmanagement.js', localTemplate)
-
+    const localTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_local.txt').toString());
+    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\locales\\zh-CN\\${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(__dirname, `src\\locales\\en-US\\${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
 
 }
 
-test()
+program
+    .command('create <model> [otherParams...]')
+    .alias('c')
+    .description('Generates new code')
+    .action(function (model, otherParams) {
+        console.log('model', model);
+        generate(model)
+    });
+
+program.parse(process.argv);
+

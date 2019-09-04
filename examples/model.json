@@ -1,0 +1,32 @@
+{
+    "name": "AccountManagement",
+    "formName": "Account",
+    "folder": "hehe",
+    "configs": [
+        {
+            "dataIndex": "username",
+            "type": "text",
+            "searchable": true
+        },
+        {
+            "dataIndex": "roles",
+            "type": "tag",
+            "enumerates": [
+                "0",
+                "1"
+            ],
+            "searchable": true,
+            "multiple": true
+        },
+        {
+            "dataIndex": "auth",
+            "type": "badge",
+            "enumerates": [
+                "series",
+                "normal"
+            ],
+            "searchable": true,
+            "multiple": true
+        }
+    ]
+}
