@@ -32,6 +32,7 @@ import ReactEcharts from 'echarts-for-react';
 import { cloneDeep } from 'lodash';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import ELCBuildingResponsive from '@/components/ELCBuildingResponsive';
+import styles from './%{__ELC_CRUD__NAME}%.less';
 
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 
@@ -78,6 +79,35 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
     // 这就是基本上每一列的渲染方式 请折叠
     columns = [
         %{__ELC_CRUD__COLUMNS}%
+        {
+            key: 'operation',
+            render: (text, record) => (
+                <div onClick={e => e.stopPropagation()}>
+                <Dropdown
+                    overlay={
+                        <Menu>
+                            <Menu.Item
+                            key="update"
+                            onClick={e => {
+                                console.log('update', record);
+                                this.setState({
+                                    current: cloneDeep(record),
+                                    createOrUpdateModalVisible: true,
+                                });
+                            }}
+                            >
+                            {formatMessage({ id: 'common.update' })}
+                            </Menu.Item>
+                        </Menu>
+                    }
+                >
+                    <a>
+                    {formatMessage({ id: 'common.action' })} <Icon type="down" />
+                    </a>
+                </Dropdown>
+                </div>
+            ),
+        },
     ];
 
     constructor(props) {
@@ -220,8 +250,8 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         return (
             <GridContent>
                 <Card bordered={false}>
-                    <div>
-                        <div>{this.renderSimpleForm()}</div>
+                    <div className={styles.tableList}>
+                        <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
                         <Table
                             loading={loading}
                             dataSource={data}

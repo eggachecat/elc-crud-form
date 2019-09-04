@@ -17,11 +17,13 @@ const global_dict = {
     __ELC_CRUD__CLASS_NAME: `AccountManagement`, // export的class的名称
     __ELC_CRUD__BUILDING_RESPONSIVE: `@ELCBuildingResponsive`, // 是否建筑响应?
     __ELC_CRUD__VARIABLE_FORM: `CreateOrUpdateAccountForm`, // CU的modal的名称
-    __ELC_CRUD__SEARCH_FORM: null // 搜索的字段
+    __ELC_CRUD__SEARCH_FORM: null, // 搜索的字段
+    __ELC_CRUD__LOCALS_LOCALS: {}
 }
 
 function createTextColumn({ prefix, dataIndex }) {
     global_dict.__ELC_CRUD__MOCK_DATA_ROW[dataIndex] = `${Math.random()}`
+    global_dict.__ELC_CRUD__LOCALS_LOCALS[`${prefix}.${dataIndex}`] = `${prefix}.${dataIndex}`
     return `
         {
             title: formatMessage({ id: '${prefix}.${dataIndex}' }),
@@ -38,12 +40,16 @@ function createBadgeColumn({ prefix, dataIndex, enumerates, multiple = false }) 
         global_dict.__ELC_CRUD__MOCK_DATA_ROW[dataIndex] = `${enumerates[0]}`
     }
     global_dict.__ELC_CRUD__BADGE_DICT[dataIndex] = enumerates.reduce((dict, item, index) => {
+        global_dict.__ELC_CRUD__LOCALS_LOCALS[`${prefix}.${dataIndex}.${item}`] = `${prefix}.${dataIndex}.${item}`
+
         dict[item] = {
             msgId: `${prefix}.${dataIndex}.${item}`,
             color: ELC_COLORS[index]
         }
         return dict
     }, {});
+    global_dict.__ELC_CRUD__LOCALS_LOCALS[`${prefix}.${dataIndex}`] = `${prefix}.${dataIndex}`
+
     if (multiple) {
         return `
         {
@@ -85,8 +91,11 @@ function createTagColumn({ prefix, dataIndex, enumerates, multiple = false }) {
     } else {
         global_dict.__ELC_CRUD__MOCK_DATA_ROW[dataIndex] = `${enumerates[0]}`
     }
+    global_dict.__ELC_CRUD__LOCALS_LOCALS[`${prefix}.${dataIndex}`] = `${prefix}.${dataIndex}`
 
     global_dict.__ELC_CRUD__TAG_DICT[dataIndex] = enumerates.reduce((dict, item, index) => {
+        global_dict.__ELC_CRUD__LOCALS_LOCALS[`${prefix}.${dataIndex}.${item}`] = `${prefix}.${dataIndex}.${item}`
+
         dict[item] = {
             msgId: `${prefix}.${dataIndex}.${item}`,
             color: ELC_COLORS[index]
@@ -128,23 +137,27 @@ function createTagColumn({ prefix, dataIndex, enumerates, multiple = false }) {
 }
 
 
-function createFormItemText({ prefix, dataIndex, required = false }) {
+function createFormItemText({ prefix, dataIndex, required = false, updateForm = false }) {
+    global_dict.__ELC_CRUD__LOCALS_LOCALS[`${prefix}.${dataIndex}`] = `${prefix}.${dataIndex}`
     return `
         <Form.Item label={formatMessage({ id: '${prefix}.${dataIndex}' })}>
             {getFieldDecorator('${dataIndex}', {
                 rules: [{ required: ${required} }],
-            })(<Input />)}
+                ${updateForm ? `initialValue: current['${dataIndex}'],` : ""}
+            })(<Input placeholder={formatMessage({ id: 'common.input' })} style={{ width: '100%' }} />)}
         </Form.Item>
     `
 }
 
-function createFormItemSelect({ prefix, dataIndex, dictName, required = false }) {
+function createFormItemSelect({ prefix, dataIndex, dictName, required = false, updateForm = false }) {
+    global_dict.__ELC_CRUD__LOCALS_LOCALS[`${prefix}.${dataIndex}`] = `${prefix}.${dataIndex}`
     return `
         <Form.Item label={formatMessage({ id: '${prefix}.${dataIndex}' })}>
             {getFieldDecorator('${dataIndex}', {
                 rules: [{ required: ${required} }],
+                ${updateForm ? `initialValue: current['${dataIndex}'],` : ""}
             })(
-                <Select>
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
                     {Object.keys(${dictName}['${dataIndex}']).map(k => (
                         <Option key={${dictName}['${dataIndex}'][k].msgId} value={k}>
                             {formatMessage({ id: ${dictName}['${dataIndex}'][k].msgId })}
@@ -160,11 +173,11 @@ function createFormItemSelect({ prefix, dataIndex, dictName, required = false })
 function generateColumn(row) {
     switch (row.type) {
         case 'tag':
-            return createTagColumn(row)
+            return createTagColumn({ ...row })
         case 'badge':
-            return createBadgeColumn(row)
+            return createBadgeColumn({ ...row })
         default:
-            return createTextColumn(row)
+            return createTextColumn({ ...row })
     }
 }
 
@@ -176,7 +189,7 @@ function generateSearchForm(row) {
             case 'badge':
                 return createFormItemSelect({ ...row, dictName: 'BADGE_DICT' })
             default:
-                return createFormItemText(row)
+                return createFormItemText({ ...row })
         }
     }
     return ""
@@ -185,11 +198,11 @@ function generateSearchForm(row) {
 function generateCreateOrUpdateForm(row) {
     switch (row.type) {
         case 'tag':
-            return createFormItemSelect({ ...row, dictName: 'TAG_DICT' })
+            return createFormItemSelect({ ...row, dictName: 'TAG_DICT', updateForm: true })
         case 'badge':
-            return createFormItemSelect({ ...row, dictName: 'BADGE_DICT' })
+            return createFormItemSelect({ ...row, dictName: 'BADGE_DICT', updateForm: true })
         default:
-            return createFormItemText(row)
+            return createFormItemText({ ...row, updateForm: true })
     }
 }
 
@@ -229,6 +242,13 @@ function test() {
     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\services\\api-account-management.js', apiTemplate)
+
+    const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
+    fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.less', lessTemplate)
+
+    // const localTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_local.txt').toString());
+    // fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\locales\\zh-CN\\accountmanagement.js', localTemplate)
+
 
 }
 
