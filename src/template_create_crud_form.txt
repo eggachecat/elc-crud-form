@@ -64,7 +64,9 @@ const Wrapped%{__ELC_CRUD__VARIABLE_FORM}% = Form.create()(%{__ELC_CRUD__VARIABL
 @connect(({ %{__ELC_CRUD__MODEL}%, setting, loading }) => ({
     %{__ELC_CRUD__MODEL}%,
     setting,
-    loading: loading.effects['%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List']
+    loading: loading.effects['%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List'],
+    updating: loading.effects['%{__ELC_CRUD__MODEL}%/update%{__ELC_CRUD__NAME}%'],
+    creating: loading.effects['%{__ELC_CRUD__MODEL}%/create%{__ELC_CRUD__NAME}%']
 }))
 @Form.create()
 %{__ELC_CRUD__BUILDING_RESPONSIVE}%
@@ -245,6 +247,8 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
             loading,
             searching,
             %{__ELC_CRUD__MODEL}%: { list: data, total },
+            updating,
+            creating
         } = this.props;
         const self = this;
         console.log('data', data);
@@ -273,12 +277,24 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                 </Card>
                 <Modal
                     visible={this.state.createOrUpdateModalVisible}
-                    onCancel={() => {
-                        this.setState({ createOrUpdateModalVisible: false, current: {} });
-                    }}
-                    onOk={() => {
-                        this.onUpdate();
-                    }}
+                    footer={[
+                        <Button
+                          key="0"
+                          onClick={() => {
+                            this.setState({ createOrUpdateModalVisible: false, current: {} });
+                        }}
+                        >
+                          {formatMessage({ id: 'common.cancel' })}
+                        </Button>,
+                        <Button
+                          type="primary"
+                          key="1"
+                          loading={updating || creating}
+                          onClick={ () => this.onUpdate()}
+                        >
+                          {formatMessage({ id: 'common.confirm' })}
+                        </Button>,
+                      ]}
                 >
                     <Wrapped%{__ELC_CRUD__VARIABLE_FORM}%
                         current={current}
