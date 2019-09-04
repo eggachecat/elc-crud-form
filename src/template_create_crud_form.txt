@@ -147,13 +147,13 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
 
             if (current.id) {
                 dispatch({
-                    type: '%{__ELC_CRUD__MODEL}%/updateContact',
+                    type: '%{__ELC_CRUD__MODEL}%/update%{__ELC_CRUD__NAME}%',
                     payload: { ...fieldsValue, building_id: selectedBuildingId, id: current.id },
                     onSuccess,
                 });
             } else {
                 dispatch({
-                    type: '%{__ELC_CRUD__MODEL}%/createContact',
+                    type: '%{__ELC_CRUD__MODEL}%/create%{__ELC_CRUD__NAME}%',
                     payload: { ...fieldsValue, building_id: selectedBuildingId },
                     onSuccess,
                 });
@@ -226,6 +226,8 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                     icon="plus"
                     type="primary"
                     onClick={() => {
+                        const form = this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref.current;
+                        form.resetFields()
                         this.setState({
                             current: {},
                             createOrUpdateModalVisible: true,
