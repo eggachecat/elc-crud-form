@@ -9,14 +9,17 @@
     "examples"
   ],
   "scripts": {
-    "start": "babel-node ./bin/elc-crud-form.js"
+    "start": "babel-node ./src/elc-crud-form.js",
+    "build": "babel src --out-dir bin --copy-files",
+    "prepublish": "npm run build"
   },
   "author": "eggahecat <sunao_0626@hotmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
-    "@babel/preset-env": "^7.5.5"
+    "@babel/preset-env": "^7.5.5",
+    "@babel/cli": "^7.5.5"
   },
   "dependencies": {
     "babel-node": "0.0.1-security",
