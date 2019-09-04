@@ -7,16 +7,22 @@ ELC_CRUD_FORM
 
 # 使用方法
 ## 指令
-```
-    cd PROJECT_ROOT
-    elc-crud-form ./model.json
-```
+
+- 安装
+    ```
+        npm install -g elc-crud-form
+    ```
+- 使用
+    ```
+        cd PROJECT_ROOT
+        create-elc-crud-form c ./model.json
+    ```
 ## model.json
 ```json
 {
     "name": "MODEL_NAME",
     "formName": "FORM_NAME",
-    "folder": "BASE_FOLDER_NAME",
+    "folder": "FOLDER_NAME_UNDER_PAGES",
     "configs": [
         {
             "dataIndex": "username",
