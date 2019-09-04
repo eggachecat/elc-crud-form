@@ -1,6 +1,6 @@
 {
   "name": "elc-crud-form",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "bin": {
     "create-elc-crud-form": "./bin/elc-crud-form.js"
   },
