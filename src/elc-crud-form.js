@@ -236,47 +236,6 @@ function convertToMinusCase(str) {
     return str.split('').map(c => isUpperCase(c) ? `-${c.toLowerCase()}` : c).join('').replace("-", "") // 第一个必须大写
 }
 
-
-// __dirname
-// function test() {
-//     const configs = [
-//         { dataIndex: 'username', type: 'text', searchable: true, multiple: true },
-//         { dataIndex: 'roles', type: 'tag', enumerates: ['0', '1'], searchable: true, multiple: true },
-//         { dataIndex: 'auth', type: 'badge', enumerates: ['series', 'normal'], searchable: true, multiple: true },
-//     ]
-//     console.log(configs.length)
-//     // console.log();
-//     // console.log(configs.map(config => generateCreateOrUpdateForm({ prefix, ...config })).join(""));
-
-//     global_dict.__ELC_CRUD__COLUMNS = configs.map(config => generateColumn({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
-//     global_dict.__ELC_CRUD__SEARCH_FORM = configs.map(config => ` 
-//         <Col md={6} sm={24}>
-//             ${generateSearchForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })}
-//         </Col>
-//     `).join("")
-//     global_dict.__ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS = configs.map(config => generateCreateOrUpdateForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
-
-//     console.log(global_dict.__ELC_CRUD__MOCK_DATA_ROW)
-//     const pageTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form.txt').toString());
-//     console.log(pageTemplate)
-//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.js', pageTemplate)
-
-//     const modelTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_model.txt').toString());
-//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\models\\accountmanagement.js', modelTemplate)
-
-//     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
-//     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
-//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\services\\api-account-management.js', apiTemplate)
-
-//     const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
-//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.less', lessTemplate)
-
-//     // const localTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_local.txt').toString());
-//     // fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\locales\\zh-CN\\accountmanagement.js', localTemplate)
-
-// }
-
-
 function generate(file) {
     const config = JSON.parse(fs.readFileSync(file).toString())
     const { configs, name, formName, folder } = config
@@ -302,25 +261,25 @@ function generate(file) {
 
     console.log("Generating page template....")
     const pageTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\pages\\${baseFolder}\\${global_dict.__ELC_CRUD__NAME}.js`)), pageTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `pages`, `${baseFolder}`, `${global_dict.__ELC_CRUD__NAME}.js`)), pageTemplate)
 
     console.log("Generating model template....")
     const modelTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_model.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\pages\\${baseFolder}\\models\\${global_dict.__ELC_CRUD__MODEL}.js`)), modelTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `pages`, `${baseFolder}`, `models`, `${global_dict.__ELC_CRUD__MODEL}.js`)), modelTemplate)
 
     console.log("Generating api template....")
     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\services\\api-${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `services`, `api-${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
 
     console.log("Generating styles template....")
     const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\pages\\${baseFolder}\\${global_dict.__ELC_CRUD__NAME}.less`)), lessTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `pages`, `${baseFolder}`, `${global_dict.__ELC_CRUD__NAME}.less`)), lessTemplate)
 
     console.log("Generating local template....")
     const localTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_local.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\locales\\zh-CN\\${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
-    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\locales\\en-US\\${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `locales`, `zh-CN`, `${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `locales`, `en-US`, `${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
 
 }
 

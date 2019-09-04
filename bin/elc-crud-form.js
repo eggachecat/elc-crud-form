@@ -219,38 +219,7 @@ function convertToMinusCase(str) {
   return str.split('').map(function (c) {
     return isUpperCase(c) ? "-".concat(c.toLowerCase()) : c;
   }).join('').replace("-", ""); // 第一个必须大写
-} // __dirname
-// function test() {
-//     const configs = [
-//         { dataIndex: 'username', type: 'text', searchable: true, multiple: true },
-//         { dataIndex: 'roles', type: 'tag', enumerates: ['0', '1'], searchable: true, multiple: true },
-//         { dataIndex: 'auth', type: 'badge', enumerates: ['series', 'normal'], searchable: true, multiple: true },
-//     ]
-//     console.log(configs.length)
-//     // console.log();
-//     // console.log(configs.map(config => generateCreateOrUpdateForm({ prefix, ...config })).join(""));
-//     global_dict.__ELC_CRUD__COLUMNS = configs.map(config => generateColumn({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
-//     global_dict.__ELC_CRUD__SEARCH_FORM = configs.map(config => ` 
-//         <Col md={6} sm={24}>
-//             ${generateSearchForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })}
-//         </Col>
-//     `).join("")
-//     global_dict.__ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS = configs.map(config => generateCreateOrUpdateForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
-//     console.log(global_dict.__ELC_CRUD__MOCK_DATA_ROW)
-//     const pageTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form.txt').toString());
-//     console.log(pageTemplate)
-//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.js', pageTemplate)
-//     const modelTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_model.txt').toString());
-//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\models\\accountmanagement.js', modelTemplate)
-//     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
-//     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
-//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\services\\api-account-management.js', apiTemplate)
-//     const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
-//     fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\pages\\Account\\Settings\\AccountManagement.less', lessTemplate)
-//     // const localTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_local.txt').toString());
-//     // fs.writeFileSync('D:\\Workspace\\elc\\v2.preview.pro.ant.design\\src\\locales\\zh-CN\\accountmanagement.js', localTemplate)
-// }
-
+}
 
 function generate(file) {
   var config = JSON.parse(_fs["default"].readFileSync(file).toString());
@@ -291,30 +260,30 @@ function generate(file) {
   console.log("Generating page template....");
   var pageTemplate = fillTemplate(_fs["default"].readFileSync(__dirname + '/template_create_crud_form.txt').toString());
 
-  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src\\pages\\".concat(baseFolder, "\\").concat(global_dict.__ELC_CRUD__NAME, ".js"))), pageTemplate);
+  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src", "pages", "".concat(baseFolder), "".concat(global_dict.__ELC_CRUD__NAME, ".js"))), pageTemplate);
 
   console.log("Generating model template....");
   var modelTemplate = fillTemplate(_fs["default"].readFileSync(__dirname + '/template_create_crud_form_model.txt').toString());
 
-  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src\\pages\\".concat(baseFolder, "\\models\\").concat(global_dict.__ELC_CRUD__MODEL, ".js"))), modelTemplate);
+  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src", "pages", "".concat(baseFolder), "models", "".concat(global_dict.__ELC_CRUD__MODEL, ".js"))), modelTemplate);
 
   console.log("Generating api template....");
   global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW];
   var apiTemplate = fillTemplate(_fs["default"].readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
 
-  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src\\services\\api-".concat(global_dict.__ELC_CRUD__API_NAME, ".js"))), apiTemplate);
+  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src", "services", "api-".concat(global_dict.__ELC_CRUD__API_NAME, ".js"))), apiTemplate);
 
   console.log("Generating styles template....");
   var lessTemplate = fillTemplate(_fs["default"].readFileSync(__dirname + '/template_less.txt').toString());
 
-  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src\\pages\\".concat(baseFolder, "\\").concat(global_dict.__ELC_CRUD__NAME, ".less"))), lessTemplate);
+  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src", "pages", "".concat(baseFolder), "".concat(global_dict.__ELC_CRUD__NAME, ".less"))), lessTemplate);
 
   console.log("Generating local template....");
   var localTemplate = fillTemplate(_fs["default"].readFileSync(__dirname + '/template_local.txt').toString());
 
-  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src\\locales\\zh-CN\\".concat(global_dict.__ELC_CRUD__NAME, ".js"))), localTemplate);
+  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src", "locales", "zh-CN", "".concat(global_dict.__ELC_CRUD__NAME, ".js"))), localTemplate);
 
-  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src\\locales\\en-US\\".concat(global_dict.__ELC_CRUD__NAME, ".js"))), localTemplate);
+  _fs["default"].writeFileSync(ensureDirectoryExistence(_path["default"].join(cwd, "src", "locales", "en-US", "".concat(global_dict.__ELC_CRUD__NAME, ".js"))), localTemplate);
 }
 
 _commander["default"].command('create <model> [otherParams...]').alias('c').description('Generates new code').action(function (model, otherParams) {
