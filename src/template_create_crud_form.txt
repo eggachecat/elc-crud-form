@@ -229,7 +229,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                     type="primary"
                     onClick={() => {
                         const form = this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref.current;
-                        form.resetFields()
+                        form && form.resetFields()
                         this.setState({
                             current: {},
                             createOrUpdateModalVisible: true,
