@@ -233,7 +233,7 @@ function isUpperCase(character) {
 }
 
 function convertToMinusCase(str) {
-    return str.split('').map(c => isUpperCase(c) ? `-${c.toLowerCase()}` : c).join('') // 第一个必须大写
+    return str.split('').map(c => isUpperCase(c) ? `-${c.toLowerCase()}` : c).join('').replace("-", "") // 第一个必须大写
 }
 
 
@@ -311,7 +311,7 @@ function generate(file) {
     console.log("Generating api template....")
     global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
-    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\services\\api${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
+    fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src\\services\\api-${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
 
     console.log("Generating styles template....")
     const lessTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_less.txt').toString());
