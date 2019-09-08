@@ -64,7 +64,9 @@ const Wrapped%{__ELC_CRUD__VARIABLE_FORM}% = Form.create()(%{__ELC_CRUD__VARIABL
 @connect(({ %{__ELC_CRUD__MODEL}%, setting, loading }) => ({
     %{__ELC_CRUD__MODEL}%,
     setting,
-    loading: loading.effects['%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List']
+    loading: loading.effects['%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List'],
+    updating: loading.effects['%{__ELC_CRUD__MODEL}%/update%{__ELC_CRUD__NAME}%'],
+    creating: loading.effects['%{__ELC_CRUD__MODEL}%/create%{__ELC_CRUD__NAME}%']
 }))
 @Form.create()
 %{__ELC_CRUD__BUILDING_RESPONSIVE}%
@@ -147,13 +149,13 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
 
             if (current.id) {
                 dispatch({
-                    type: '%{__ELC_CRUD__MODEL}%/updateContact',
+                    type: '%{__ELC_CRUD__MODEL}%/update%{__ELC_CRUD__NAME}%',
                     payload: { ...fieldsValue, building_id: selectedBuildingId, id: current.id },
                     onSuccess,
                 });
             } else {
                 dispatch({
-                    type: '%{__ELC_CRUD__MODEL}%/createContact',
+                    type: '%{__ELC_CRUD__MODEL}%/create%{__ELC_CRUD__NAME}%',
                     payload: { ...fieldsValue, building_id: selectedBuildingId },
                     onSuccess,
                 });
@@ -226,6 +228,8 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                     icon="plus"
                     type="primary"
                     onClick={() => {
+                        const form = this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref.current;
+                        form && form.resetFields();
                         this.setState({
                             current: {},
                             createOrUpdateModalVisible: true,
@@ -243,6 +247,8 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
             loading,
             searching,
             %{__ELC_CRUD__MODEL}%: { list: data, total },
+            updating,
+            creating
         } = this.props;
         const self = this;
         console.log('data', data);
@@ -271,12 +277,24 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                 </Card>
                 <Modal
                     visible={this.state.createOrUpdateModalVisible}
-                    onCancel={() => {
-                        this.setState({ createOrUpdateModalVisible: false, current: {} });
-                    }}
-                    onOk={() => {
-                        this.onUpdate();
-                    }}
+                    footer={[
+                        <Button
+                          key="0"
+                          onClick={() => {
+                            this.setState({ createOrUpdateModalVisible: false, current: {} });
+                        }}
+                        >
+                          {formatMessage({ id: 'common.cancel' })}
+                        </Button>,
+                        <Button
+                          type="primary"
+                          key="1"
+                          loading={updating || creating}
+                          onClick={ () => this.onUpdate()}
+                        >
+                          {formatMessage({ id: 'common.confirm' })}
+                        </Button>,
+                      ]}
                 >
                     <Wrapped%{__ELC_CRUD__VARIABLE_FORM}%
                         current={current}

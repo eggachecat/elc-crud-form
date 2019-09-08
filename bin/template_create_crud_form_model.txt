@@ -1,7 +1,7 @@
 import {
     create%{__ELC_CRUD__NAME}%,
     update%{__ELC_CRUD__NAME}%,
-    retrive%{__ELC_CRUD__NAME}%List,
+    retrieve%{__ELC_CRUD__NAME}%List,
     delete%{__ELC_CRUD__NAME}%,
 } from '@/services/api-%{__ELC_CRUD__API_NAME}%';
 import { message } from 'antd';
@@ -17,7 +17,7 @@ export default {
   effects: {
     *fetch%{__ELC_CRUD__NAME}%List ({ payload }, { call, put }) {
       if (payload.building_id) {
-        const response = yield call(retrive%{__ELC_CRUD__NAME}%List, payload);
+        const response = yield call(retrieve%{__ELC_CRUD__NAME}%List, payload);
         console.log('response', response);
         yield put({
           type: 'setList',
