@@ -14,7 +14,6 @@ function _addLocales({ ast, locale, name }) {
         enter(path) {
 
             if (path.isImportDeclaration()) {
-
                 if (path.get(`specifiers.0.local`).node.name === name) {
                     job_done_import = true
                 }
@@ -35,10 +34,11 @@ function _addLocales({ ast, locale, name }) {
                         for (var i = 0; i < spreadElements.length; i += 1) {
                             const _spreadElement = spreadElements[i]
                             // console.log(`_spreadElement: ${_spreadElement.get('argument').node.name}`)
-
-                            if (_spreadElement.get('argument').node.name === name) {
-                                // import 过了 不需要在import了
-                                return
+                            if (_spreadElement.get('argument').node){
+                                if (_spreadElement.get('argument').node.name === name) {
+                                    // import 过了 不需要在import了
+                                    return
+                                }
                             }
                         }
 

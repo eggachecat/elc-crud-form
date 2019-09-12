@@ -17,13 +17,8 @@ export default [{
   routes: [{
     path: "/AccountManagement",
     name: "AccountManagement",
-    component: "/Account/Settings/AccountManagement"
+    component: "./Account/Settings/AccountManagement"
   }, {
-    path: "undefined",
-    name: "AccountManagement",
-    component: "/Account/Settings/AccountManagement"
-  }, // dashboard
-  {
     path: '/',
     redirect: '/home',
     authority: ['admin', 'user']

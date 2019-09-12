@@ -289,7 +289,7 @@ function generate(file) {
         const filePath = path.join(cwd, `src`, `locales`, `${locale}.js`)
         const code = fs.readFileSync(filePath).toString();
         const newCode = addLocales({ code, name: global_dict.__ELC_CRUD__NAME, locale })
-        // fs.writeFileSync(filePath, newCode)
+        fs.writeFileSync(filePath, newCode)
     })
 
     console.log("Adding routes...")
@@ -299,7 +299,7 @@ function generate(file) {
         code: routerCode, config: {
             'path': `${global_dict.__ELC_CRUD__ROUTE}`,
             'name': `${global_dict.__ELC_CRUD__NAME}`,
-            'component': `/${baseFolder}/${global_dict.__ELC_CRUD__NAME}`
+            'component': `./${baseFolder}/${global_dict.__ELC_CRUD__NAME}`
         }
     })
     fs.writeFileSync(routerConfigPath, newRouterCode)
