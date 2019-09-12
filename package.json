@@ -11,8 +11,9 @@
   "scripts": {
     "start": "babel-node ./src/elc-crud-form.js c ./examples/model.json",
     "build": "babel src --out-dir bin --copy-files",
-    "test-build": "babel src --out-dir bin --copy-files && node ./bin/elc-crud-form.js c ./examples/model.json",
-    "prepublish": "npm run build"
+    "test-build": "babel src --out-dir bin --copy-files && cd ./examples/app/ && node ../../bin/elc-crud-form.js c ../model.json",
+    "prepublish": "npm run build",
+    "test": "jest"
   },
   "author": "eggahecat <sunao_0626@hotmail.com>",
   "license": "MIT",
@@ -27,6 +28,7 @@
     "@babel/traverse": "^7.6.0",
     "@babel/types": "^7.6.1",
     "babel-node": "0.0.1-security",
-    "commander": "^3.0.1"
+    "commander": "^3.0.1",
+    "jest": "^24.9.0"
   }
 }

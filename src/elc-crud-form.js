@@ -5,13 +5,15 @@ import { ELC_COLORS } from './elc-colors'
 import fs from 'fs'
 import path from 'path'
 import program from 'commander'
-
+import addLocales from './addLocales'
+import addRouter from './addRouter'
 
 const global_dict = {
     __ELC_CRUD__TAG_DICT: {},
     __ELC_CRUD__BADGE_DICT: {},
     __ELC_CRUD__MOCK_DATA: [],
     __ELC_CRUD__MOCK_DATA_ROW: {},
+    __ELC_CRUD__ROUTE: ``, // URL路径 
     __ELC_CRUD__NAME: ``, // 模型的名称: 首字母大写
     __ELC_CRUD__MODEL: ``, // 模型的model的名称
     __ELC_CRUD__API_NAME: ``,
@@ -238,11 +240,11 @@ function convertToMinusCase(str) {
 
 function generate(file) {
     const config = JSON.parse(fs.readFileSync(file).toString())
-    const { configs, name, formName, folder } = config
+    const { configs, name, formName, folder, route } = config
 
     const cwd = process.cwd()
-
     global_dict.__ELC_CRUD__NAME = `${name}` // 模型的名称: 首字母大写
+    global_dict.__ELC_CRUD__ROUTE = route ? `${route}` : `/${name}` // 模型的名称: 首字母大写
     global_dict.__ELC_CRUD__MODEL = global_dict.__ELC_CRUD__NAME.toLowerCase() // 模型的model的名称
     global_dict.__ELC_CRUD__API_NAME = `${convertToMinusCase(global_dict.__ELC_CRUD__NAME)}`
     global_dict.__ELC_CRUD__CLASS_NAME = global_dict.__ELC_CRUD__NAME
@@ -281,6 +283,26 @@ function generate(file) {
     fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `locales`, `zh-CN`, `${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
     fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `locales`, `en-US`, `${global_dict.__ELC_CRUD__NAME}.js`)), localTemplate)
 
+
+    console.log("Adding locals....");
+    ['zh-CN', 'en-US'].forEach((locale) => {
+        const filePath = path.join(cwd, `src`, `locales`, `${locale}.js`)
+        const code = fs.readFileSync(filePath).toString();
+        const newCode = addLocales({ code, name: global_dict.__ELC_CRUD__NAME, locale })
+        // fs.writeFileSync(filePath, newCode)
+    })
+
+    console.log("Adding routes...")
+    const routerConfigPath = path.join(cwd, `config`, `router.config.js`)
+    const routerCode = fs.readFileSync(routerConfigPath).toString()
+    const newRouterCode = addRouter({
+        code: routerCode, config: {
+            'path': `${global_dict.__ELC_CRUD__ROUTE}`,
+            'name': `${global_dict.__ELC_CRUD__NAME}`,
+            'component': `/${baseFolder}/${global_dict.__ELC_CRUD__NAME}`
+        }
+    })
+    fs.writeFileSync(routerConfigPath, newRouterCode)
 }
 
 program

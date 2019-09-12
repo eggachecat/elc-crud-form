@@ -1,23 +1,23 @@
 import {
-    create%{__ELC_CRUD__NAME}%,
-    update%{__ELC_CRUD__NAME}%,
-    retrieve%{__ELC_CRUD__NAME}%List,
-    delete%{__ELC_CRUD__NAME}%,
-} from '@/services/api-%{__ELC_CRUD__API_NAME}%';
+    createAccountManagement,
+    updateAccountManagement,
+    retrieveAccountManagementList,
+    deleteAccountManagement,
+} from '@/services/api-account-management';
 import { message } from 'antd';
 import { formatMessage } from 'umi-plugin-react/locale';
 
 export default {
-  namespace: '%{__ELC_CRUD__MODEL}%',
+  namespace: 'accountmanagement',
   state: {
     list: [],
     page: 0,
     total: 0,
   },
   effects: {
-    *fetch%{__ELC_CRUD__NAME}%List ({ payload }, { call, put }) {
+    *fetchAccountManagementList ({ payload }, { call, put }) {
       if (payload.building_id) {
-        const response = yield call(retrieve%{__ELC_CRUD__NAME}%List, payload);
+        const response = yield call(retrieveAccountManagementList, payload);
         console.log('response', response);
         yield put({
           type: 'setList',
@@ -27,13 +27,13 @@ export default {
         });
       }
     },
-    *update%{__ELC_CRUD__NAME}%({ payload, onSuccess }, { call, put }) {
-      const response = yield call(update%{__ELC_CRUD__NAME}%, payload);
+    *updateAccountManagement({ payload, onSuccess }, { call, put }) {
+      const response = yield call(updateAccountManagement, payload);
       onSuccess && onSuccess();
       message.success(formatMessage({ id: 'message.success-create' }));
     },
-    *create%{__ELC_CRUD__NAME}%({ payload, onSuccess }, { call, put }) {
-      const response = yield call(create%{__ELC_CRUD__NAME}%, payload);
+    *createAccountManagement({ payload, onSuccess }, { call, put }) {
+      const response = yield call(createAccountManagement, payload);
       onSuccess && onSuccess();
       message.success(formatMessage({ id: 'message.success-update' }));
     },

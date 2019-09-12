@@ -14,26 +14,28 @@ import { type } from "os";
 //   return n * n;
 // }`;
 
-const code = `
-import A from 'B';
+// const code = `
+// import A from 'B';
 
- class D {
-  constructor() {
-    var a = 'middle';
-  }
- }
+//  class D {
+//   constructor() {
+//     var a = 'middle';
+//   }
+//  }
 
-export default {
-    foo, awesome, bar
-}
-`;
+// export default {
+//     foo, awesome, bar
+// }
+// `;
 
+const code = fs.readFileSync('./examples/app/config/router.config.js').toString()
 const ast = parser.parse(code, {
     sourceType: 'module'
 });
 // console.log(ast)
 let once_1 = true
 let once_2 = true
+let job_done = false
 traverse(ast, {
     enter(path) {
 
@@ -65,10 +67,10 @@ traverse(ast, {
             // path.insertAfter(types.expressionStatement(types.stringLiteral("A little high, little low.")));
         }
 
-        if (path.isObjectExpression()) {
+        if (path.isObjectExpression() && !job_done) {
             console.log('2')
             // console.log('node>>>', path.get('properties').length)
-
+            job_done = true
             const lastIndex = path.get('properties').length - 1
 
 
@@ -78,9 +80,13 @@ traverse(ast, {
                 console.log(path.get(`properties.${i}`).get(`key`).node.name)
             }
 
-
+            // types.objectExpression(types.objectProperty(types.identifier('sunao'), types.identifier('11')))
             path.get(`properties.${lastIndex}`).insertAfter(
-                types.objectProperty(types.identifier('sunao'), types.identifier('11'),)
+                // types.objectProperty(types.identifier('sunao'), types.identifier('11'),)
+                types.objectExpression(
+                    [types.objectProperty(types.identifier('sunao'), types.identifier('11'))]
+                )
+
             );
 
         }

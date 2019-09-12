@@ -32,7 +32,7 @@ import ReactEcharts from 'echarts-for-react';
 import { cloneDeep } from 'lodash';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import ELCBuildingResponsive from '@/components/ELCBuildingResponsive';
-import styles from './%{__ELC_CRUD__NAME}%.less';
+import styles from './AccountManagement.less';
 
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 
@@ -41,11 +41,33 @@ const { Step } = Steps;
 const { Option } = Select;
 const InputGroup = Input.Group;
 
-const TAG_DICT = %{__ELC_CRUD__TAG_DICT}%;
-const BADGE_DICT = %{__ELC_CRUD__BADGE_DICT}%;
+const TAG_DICT = {
+  "roles": {
+    "0": {
+      "msgId": "AccountManagement.roles.0",
+      "color": "#3366cc"
+    },
+    "1": {
+      "msgId": "AccountManagement.roles.1",
+      "color": "#dc3912"
+    }
+  }
+};
+const BADGE_DICT = {
+  "auth": {
+    "series": {
+      "msgId": "AccountManagement.auth.series",
+      "color": "#3366cc"
+    },
+    "normal": {
+      "msgId": "AccountManagement.auth.normal",
+      "color": "#dc3912"
+    }
+  }
+};
 
 
-function %{__ELC_CRUD__VARIABLE_FORM}%(props) {
+function CreateOrUpdateAccountForm(props) {
     const {
         form: { getFieldDecorator },
         current,
@@ -53,24 +75,61 @@ function %{__ELC_CRUD__VARIABLE_FORM}%(props) {
 
     return (
         <Form>
-            %{__ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS}%
+            
+        <Form.Item label={formatMessage({ id: 'AccountManagement.username' })}>
+            {getFieldDecorator('username', {
+                rules: [{ required: false }],
+                initialValue: current['username'],
+            })(<Input placeholder={formatMessage({ id: 'common.input' })} style={{ width: '100%' }} />)}
+        </Form.Item>
+    
+        <Form.Item label={formatMessage({ id: 'AccountManagement.roles' })}>
+            {getFieldDecorator('roles', {
+                rules: [{ required: false }],
+                initialValue: current['roles'],
+            })(
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                    {Object.keys(TAG_DICT['roles']).map(k => (
+                        <Option key={TAG_DICT['roles'][k].msgId} value={k}>
+                            {formatMessage({ id: TAG_DICT['roles'][k].msgId })}
+                        </Option>
+                    ))}
+                </Select>
+            )}
+        </Form.Item>
+    
+        <Form.Item label={formatMessage({ id: 'AccountManagement.auth' })}>
+            {getFieldDecorator('auth', {
+                rules: [{ required: false }],
+                initialValue: current['auth'],
+            })(
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                    {Object.keys(BADGE_DICT['auth']).map(k => (
+                        <Option key={BADGE_DICT['auth'][k].msgId} value={k}>
+                            {formatMessage({ id: BADGE_DICT['auth'][k].msgId })}
+                        </Option>
+                    ))}
+                </Select>
+            )}
+        </Form.Item>
+    
         </Form>
     );
 }
 
-const Wrapped%{__ELC_CRUD__VARIABLE_FORM}% = Form.create()(%{__ELC_CRUD__VARIABLE_FORM}%);
+const WrappedCreateOrUpdateAccountForm = Form.create()(CreateOrUpdateAccountForm);
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ %{__ELC_CRUD__MODEL}%, setting, loading }) => ({
-    %{__ELC_CRUD__MODEL}%,
+@connect(({ accountmanagement, setting, loading }) => ({
+    accountmanagement,
     setting,
-    loading: loading.effects['%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List'],
-    updating: loading.effects['%{__ELC_CRUD__MODEL}%/update%{__ELC_CRUD__NAME}%'],
-    creating: loading.effects['%{__ELC_CRUD__MODEL}%/create%{__ELC_CRUD__NAME}%']
+    loading: loading.effects['accountmanagement/fetchAccountManagementList'],
+    updating: loading.effects['accountmanagement/updateAccountManagement'],
+    creating: loading.effects['accountmanagement/createAccountManagement']
 }))
 @Form.create()
-%{__ELC_CRUD__BUILDING_RESPONSIVE}%
-class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
+@ELCBuildingResponsive
+class AccountManagement extends React.Component {
     state = {
         createOrUpdateModalVisible: false,
         current: {},
@@ -80,7 +139,46 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
 
     // 这就是基本上每一列的渲染方式 请折叠
     columns = [
-        %{__ELC_CRUD__COLUMNS}%
+        
+        {
+            title: formatMessage({ id: 'AccountManagement.username' }),
+            dataIndex: 'username',
+            render: (val, record) => val,
+        },
+    
+        {
+            title: formatMessage({ id: 'AccountManagement.roles' }),
+            dataIndex: 'roles',
+            render: vals => (
+                <span>
+                    {
+                        vals.map(val => (
+                            <Tag className="priority-pill" color={TAG_DICT['roles'][val].color}>
+                                {formatMessage({ id: TAG_DICT['roles'][val].msgId })}
+                            </Tag>
+                        ))
+                    }
+                </span>
+            ),
+        },
+    
+        {
+            title: formatMessage({ id: 'AccountManagement.auth' }),
+            dataIndex: 'auth',
+            render: vals => (
+                <span>
+                    {
+                        vals.map(val => (
+                            <Badge
+                            color={BADGE_DICT['auth'][val].color}
+                            text={formatMessage({ id: BADGE_DICT['auth'][val].msgId })}
+                            />
+                        ))
+                    }
+                </span>
+            ),
+        },
+    
         {
             key: 'operation',
             render: (text, record) => (
@@ -114,7 +212,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
 
     constructor(props) {
         super(props);
-        this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref = React.createRef();
+        this.wrappedCreateOrUpdateAccountFormRef = React.createRef();
         this.onUpdate = this.onUpdate.bind(this);
     }
 
@@ -126,7 +224,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
     }
 
     onBuildingChange(selectedBuildingId) {
-        this.fetch%{__ELC_CRUD__NAME}%List();
+        this.fetchAccountManagementList();
     }
 
     onUpdate() {
@@ -135,27 +233,27 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
             setting: { selectedBuildingId },
         } = this.props;
         const { current } = this.state;
-        const form = this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref.current;
+        const form = this.wrappedCreateOrUpdateAccountFormRef.current;
         const self = this;
         form.validateFields((err, fieldsValue) => {
             if (err) return;
             console.log('fieldsValue', fieldsValue);
 
             function onSuccess() {
-                self.fetch%{__ELC_CRUD__NAME}%List();
+                self.fetchAccountManagementList();
                 form.resetFields();
                 self.setState({ createOrUpdateModalVisible: false, current: {} });
             }
 
             if (current.id) {
                 dispatch({
-                    type: '%{__ELC_CRUD__MODEL}%/update%{__ELC_CRUD__NAME}%',
+                    type: 'accountmanagement/updateAccountManagement',
                     payload: { ...fieldsValue, building_id: selectedBuildingId, id: current.id },
                     onSuccess,
                 });
             } else {
                 dispatch({
-                    type: '%{__ELC_CRUD__MODEL}%/create%{__ELC_CRUD__NAME}%',
+                    type: 'accountmanagement/createAccountManagement',
                     payload: { ...fieldsValue, building_id: selectedBuildingId },
                     onSuccess,
                 });
@@ -167,7 +265,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         const { form } = this.props;
         this.setState({ page: 1 });
         form.resetFields();
-        this.fetch%{__ELC_CRUD__NAME}%List();
+        this.fetchAccountManagementList();
     };
 
     // 搜索的更新
@@ -180,7 +278,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                 console.log('err', err);
             }
             const { isactive, type } = fieldsValue;
-            this.fetch%{__ELC_CRUD__NAME}%List({
+            this.fetchAccountManagementList({
                 ...Object.keys(fieldsValue).reduce((dict, key) => {
                     return {
                         ...dict,
@@ -191,14 +289,14 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         });
     };
 
-    fetch%{__ELC_CRUD__NAME}%List(params) {
+    fetchAccountManagementList(params) {
         console.log('params', params);
         const { dispatch } = this.props;
         const {
             setting: { selectedBuildingId },
         } = this.props;
         dispatch({
-            type: '%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List',
+            type: 'accountmanagement/fetchAccountManagementList',
             payload: { building_id: selectedBuildingId, page: this.state.page, ...params },
         });
     }
@@ -211,7 +309,56 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         return (
             <Form onSubmit={this.onSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                    %{__ELC_CRUD__SEARCH_FORM}%
+                     
+        <Col md={6} sm={24}>
+            
+        <Form.Item label={formatMessage({ id: 'AccountManagement.username' })}>
+            {getFieldDecorator('username', {
+                rules: [{ required: false }],
+                
+            })(<Input placeholder={formatMessage({ id: 'common.input' })} style={{ width: '100%' }} />)}
+        </Form.Item>
+    
+        </Col>
+     
+        <Col md={6} sm={24}>
+            
+        <Form.Item label={formatMessage({ id: 'AccountManagement.roles' })}>
+            {getFieldDecorator('roles', {
+                rules: [{ required: false }],
+                
+            })(
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                    {Object.keys(TAG_DICT['roles']).map(k => (
+                        <Option key={TAG_DICT['roles'][k].msgId} value={k}>
+                            {formatMessage({ id: TAG_DICT['roles'][k].msgId })}
+                        </Option>
+                    ))}
+                </Select>
+            )}
+        </Form.Item>
+    
+        </Col>
+     
+        <Col md={6} sm={24}>
+            
+        <Form.Item label={formatMessage({ id: 'AccountManagement.auth' })}>
+            {getFieldDecorator('auth', {
+                rules: [{ required: false }],
+                
+            })(
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                    {Object.keys(BADGE_DICT['auth']).map(k => (
+                        <Option key={BADGE_DICT['auth'][k].msgId} value={k}>
+                            {formatMessage({ id: BADGE_DICT['auth'][k].msgId })}
+                        </Option>
+                    ))}
+                </Select>
+            )}
+        </Form.Item>
+    
+        </Col>
+    
                     <Col md={6} sm={24}>
                         <span>
                             <Button type="primary" onClick={this.onSearch}>
@@ -228,7 +375,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                     icon="plus"
                     type="primary"
                     onClick={() => {
-                        const form = this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref.current;
+                        const form = this.wrappedCreateOrUpdateAccountFormRef.current;
                         form && form.resetFields();
                         this.setState({
                             current: {},
@@ -246,7 +393,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         const {
             loading,
             searching,
-            %{__ELC_CRUD__MODEL}%: { list: data, total },
+            accountmanagement: { list: data, total },
             updating,
             creating
         } = this.props;
@@ -296,9 +443,9 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                         </Button>,
                       ]}
                 >
-                    <Wrapped%{__ELC_CRUD__VARIABLE_FORM}%
+                    <WrappedCreateOrUpdateAccountForm
                         current={current}
-                        ref={this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref}
+                        ref={this.wrappedCreateOrUpdateAccountFormRef}
                     />
                 </Modal>
             </GridContent>
@@ -306,4 +453,4 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
     }
 }
 
-export default %{__ELC_CRUD__CLASS_NAME}%;
+export default AccountManagement;
