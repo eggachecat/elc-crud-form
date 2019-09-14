@@ -155,7 +155,10 @@ function createFormItemText({ prefix, dataIndex, required = false, updateForm = 
     `
 }
 
-function createFormItemSelect({ prefix, dataIndex, dictName, required = false, updateForm = false }) {
+function createFormItemSelect({ prefix, dataIndex, dictName, required = false, updateForm = false, multiple = false }) {
+
+    const mode = multiple ? `mode="multiple"` : ``
+
     global_dict.__ELC_CRUD__LOCALS_LOCALS[`${prefix}.${dataIndex}`] = `${prefix}.${dataIndex}`
     return `
         <Form.Item label={formatMessage({ id: '${prefix}.${dataIndex}' })}>
@@ -163,7 +166,7 @@ function createFormItemSelect({ prefix, dataIndex, dictName, required = false, u
                 rules: [{ required: ${required} }],
                 ${updateForm ? `initialValue: current['${dataIndex}'],` : ""}
             })(
-                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }} ${mode}>
                     {Object.keys(${dictName}['${dataIndex}']).map(k => (
                         <Option key={${dictName}['${dataIndex}'][k].msgId} value={k}>
                             {formatMessage({ id: ${dictName}['${dataIndex}'][k].msgId })}
@@ -270,7 +273,13 @@ function generate(file) {
     fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `pages`, `${baseFolder}`, `models`, `${global_dict.__ELC_CRUD__MODEL}.js`)), modelTemplate)
 
     console.log("Generating api template....")
-    global_dict.__ELC_CRUD__MOCK_DATA = [global_dict.__ELC_CRUD__MOCK_DATA_ROW]
+    for (let i = 0; i < 10; i++) {
+        global_dict.__ELC_CRUD__MOCK_DATA.push({
+            id: i,
+            ...global_dict.__ELC_CRUD__MOCK_DATA_ROW
+        })
+
+    }
     const apiTemplate = fillTemplate(fs.readFileSync(__dirname + '/template_create_crud_form_api.txt').toString());
     fs.writeFileSync(ensureDirectoryExistence(path.join(cwd, `src`, `services`, `api-${global_dict.__ELC_CRUD__API_NAME}.js`)), apiTemplate)
 

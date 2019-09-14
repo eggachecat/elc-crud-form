@@ -2,9 +2,6 @@ import * as parser from "@babel/parser";
 import traverse from "@babel/traverse";
 import generate from '@babel/generator';
 import * as types from '@babel/types'
-import fs from 'fs'
-import { type } from "os";
-
 
 function findInObject(path, targetKey) {
     for (let i = 0; i < path.get('properties').length; i++) {
@@ -17,13 +14,6 @@ function findInObject(path, targetKey) {
     }
 
 }
-
-
-const capitalize = (s) => {
-    if (typeof s !== 'string') return ''
-    return s.charAt(0).toUpperCase() + s.slice(1)
-}
-
 
 
 /**

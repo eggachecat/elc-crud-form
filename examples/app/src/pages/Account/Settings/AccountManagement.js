@@ -88,7 +88,7 @@ function CreateOrUpdateAccountForm(props) {
                 rules: [{ required: false }],
                 initialValue: current['roles'],
             })(
-                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }} mode="multiple">
                     {Object.keys(TAG_DICT['roles']).map(k => (
                         <Option key={TAG_DICT['roles'][k].msgId} value={k}>
                             {formatMessage({ id: TAG_DICT['roles'][k].msgId })}
@@ -103,7 +103,7 @@ function CreateOrUpdateAccountForm(props) {
                 rules: [{ required: false }],
                 initialValue: current['auth'],
             })(
-                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }} mode="multiple">
                     {Object.keys(BADGE_DICT['auth']).map(k => (
                         <Option key={BADGE_DICT['auth'][k].msgId} value={k}>
                             {formatMessage({ id: BADGE_DICT['auth'][k].msgId })}
@@ -328,7 +328,7 @@ class AccountManagement extends React.Component {
                 rules: [{ required: false }],
                 
             })(
-                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }} mode="multiple">
                     {Object.keys(TAG_DICT['roles']).map(k => (
                         <Option key={TAG_DICT['roles'][k].msgId} value={k}>
                             {formatMessage({ id: TAG_DICT['roles'][k].msgId })}
@@ -347,7 +347,7 @@ class AccountManagement extends React.Component {
                 rules: [{ required: false }],
                 
             })(
-                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }}>
+                <Select placeholder={formatMessage({ id: 'common.select' })} style={{ width: '100%' }} mode="multiple">
                     {Object.keys(BADGE_DICT['auth']).map(k => (
                         <Option key={BADGE_DICT['auth'][k].msgId} value={k}>
                             {formatMessage({ id: BADGE_DICT['auth'][k].msgId })}

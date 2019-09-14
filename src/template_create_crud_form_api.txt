@@ -1,84 +1,75 @@
-export async function create%{__ELC_CRUD__NAME}%() {
+/*
+const mock_results = [
+    %{__ELC_CRUD__MOCK_DATA_ROW}%,
+    %{__ELC_CRUD__MOCK_DATA_ROW}%,
+    %{__ELC_CRUD__MOCK_DATA_ROW}%,
+    %{__ELC_CRUD__MOCK_DATA_ROW}%,
+    %{__ELC_CRUD__MOCK_DATA_ROW}%,
+    %{__ELC_CRUD__MOCK_DATA_ROW}%,
+    %{__ELC_CRUD__MOCK_DATA_ROW}%,
+]
+*/
+
+const mock_results = %{__ELC_CRUD__MOCK_DATA}%
+
+const mock_lag = 1000
+
+
+let total = mock_results.length
+
+
+
+
+export async function create%{__ELC_CRUD__NAME}%({...obj}) {
+    mock_results.push(obj)
+    total += 1
     return new Promise(resolve => {
         setTimeout(()=>{
             resolve({
-                data: {
-                    results: [
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                    ],
-                    page: 1,
-                    total: 7,
-                }
+                msg: "success"
             });
-        }, 2000)
+        }, mock_lag)
     });
  }
- export async function update%{__ELC_CRUD__NAME}%() {
+ export async function update%{__ELC_CRUD__NAME}%({id, ...props}) {
+    const _index = mock_results.findIndex(r => r.id === id)
+    mock_results[_index] = {...mock_results[_index], ...props}
+
     return new Promise(resolve => {
         setTimeout(()=>{
             resolve({
                 data: {
-                    results: [
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                    ],
-                    page: 1,
-                    total: 7,
+                    msg: "success"
                 }
             });
-        }, 2000)
+        }, mock_lag)
     });
  }
- export async function  retrieve%{__ELC_CRUD__NAME}%List() {
+ export async function  retrieve%{__ELC_CRUD__NAME}%List({page = 1, pageSize = 3}) {
+    const start = page * Math.floor(total / pageSize)
     return new Promise(resolve => {
         setTimeout(()=>{
             resolve({
                 data: {
-                    results: [
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                    ],
-                    page: 1,
-                    total: 7,
+                    results: mock_results.slice(start, start + pageSize),
+                    page_count: page,
+                    count: total,
                 }
             });
-        }, 2000)
+        }, mock_lag)
     });
  }
  export async function delete%{__ELC_CRUD__NAME}%() {
+    const _index = mock_results.findIndex(r => r.id === id)
+    mock_results.splice(_index, 1)
+    total -= 1
     return new Promise(resolve => {
         setTimeout(()=>{
             resolve({
                 data: {
-                    results: [
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                        %{__ELC_CRUD__MOCK_DATA_ROW}%,
-                    ],
-                    page: 1,
-                    total: 7,
+                   msg: "success"
                 }
             });
-        }, 2000)
+        }, mock_lag)
     });
  }
