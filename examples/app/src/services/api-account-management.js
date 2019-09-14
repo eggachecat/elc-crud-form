@@ -1,7 +1,7 @@
 /*
 const mock_results = [
     {
-  "username": "0.3553615438939901",
+  "username": "0.4016082399005265",
   "roles": [
     "0",
     "0"
@@ -12,7 +12,7 @@ const mock_results = [
   ]
 },
     {
-  "username": "0.3553615438939901",
+  "username": "0.4016082399005265",
   "roles": [
     "0",
     "0"
@@ -23,7 +23,7 @@ const mock_results = [
   ]
 },
     {
-  "username": "0.3553615438939901",
+  "username": "0.4016082399005265",
   "roles": [
     "0",
     "0"
@@ -34,7 +34,7 @@ const mock_results = [
   ]
 },
     {
-  "username": "0.3553615438939901",
+  "username": "0.4016082399005265",
   "roles": [
     "0",
     "0"
@@ -45,7 +45,7 @@ const mock_results = [
   ]
 },
     {
-  "username": "0.3553615438939901",
+  "username": "0.4016082399005265",
   "roles": [
     "0",
     "0"
@@ -56,7 +56,7 @@ const mock_results = [
   ]
 },
     {
-  "username": "0.3553615438939901",
+  "username": "0.4016082399005265",
   "roles": [
     "0",
     "0"
@@ -67,7 +67,7 @@ const mock_results = [
   ]
 },
     {
-  "username": "0.3553615438939901",
+  "username": "0.4016082399005265",
   "roles": [
     "0",
     "0"
@@ -83,7 +83,7 @@ const mock_results = [
 const mock_results = [
   {
     "id": 0,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -95,7 +95,7 @@ const mock_results = [
   },
   {
     "id": 1,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -107,7 +107,7 @@ const mock_results = [
   },
   {
     "id": 2,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -119,7 +119,7 @@ const mock_results = [
   },
   {
     "id": 3,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -131,7 +131,7 @@ const mock_results = [
   },
   {
     "id": 4,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -143,7 +143,7 @@ const mock_results = [
   },
   {
     "id": 5,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -155,7 +155,7 @@ const mock_results = [
   },
   {
     "id": 6,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -167,7 +167,7 @@ const mock_results = [
   },
   {
     "id": 7,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -179,7 +179,7 @@ const mock_results = [
   },
   {
     "id": 8,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -191,7 +191,7 @@ const mock_results = [
   },
   {
     "id": 9,
-    "username": "0.3553615438939901",
+    "username": "0.4016082399005265",
     "roles": [
       "0",
       "0"
@@ -236,15 +236,29 @@ export async function createAccountManagement({...obj}) {
         }, mock_lag)
     });
  }
- export async function  retrieveAccountManagementList({page = 1, pageSize = 3}) {
-    const start = page * Math.floor(total / pageSize)
+ export async function  retrieveAccountManagementList({page = 1, pageSize = 3, ...queries}) {
+
+    const sub_mock_results = mock_results.filter(v => {
+        const keys = Object.keys(queries)
+        for (let i = 0; i < keys.length; i+=1) {
+            const key = keys[i];
+            console.log(v, queries, key, v[key], queries[key])
+            if ((key in v) && (v[key] !== queries[key])) {
+                return false
+            }
+        }
+        return true
+    })
+    const _total = sub_mock_results.length
+    const start = page * Math.floor(_total / pageSize)
+
     return new Promise(resolve => {
-        setTimeout(()=>{
+        setTimeout(() => {
             resolve({
                 data: {
-                    results: mock_results.slice(start, start + pageSize),
+                    results: sub_mock_results.slice(start, start + pageSize),
                     page_count: page,
-                    count: total,
+                    count: _total,
                 }
             });
         }, mock_lag)

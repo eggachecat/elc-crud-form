@@ -45,15 +45,29 @@ export async function create%{__ELC_CRUD__NAME}%({...obj}) {
         }, mock_lag)
     });
  }
- export async function  retrieve%{__ELC_CRUD__NAME}%List({page = 1, pageSize = 3}) {
-    const start = page * Math.floor(total / pageSize)
+ export async function  retrieve%{__ELC_CRUD__NAME}%List({page = 1, pageSize = 3, ...queries}) {
+
+    const sub_mock_results = mock_results.filter(v => {
+        const keys = Object.keys(queries)
+        for (let i = 0; i < keys.length; i+=1) {
+            const key = keys[i];
+            console.log(v, queries, key, v[key], queries[key])
+            if ((key in v) && (v[key] !== queries[key])) {
+                return false
+            }
+        }
+        return true
+    })
+    const _total = sub_mock_results.length
+    const start = page * Math.floor(_total / pageSize)
+
     return new Promise(resolve => {
-        setTimeout(()=>{
+        setTimeout(() => {
             resolve({
                 data: {
-                    results: mock_results.slice(start, start + pageSize),
+                    results: sub_mock_results.slice(start, start + pageSize),
                     page_count: page,
-                    count: total,
+                    count: _total,
                 }
             });
         }, mock_lag)
