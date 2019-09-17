@@ -297,7 +297,7 @@ class AccountManagement extends React.Component {
         } = this.props;
         dispatch({
             type: 'accountmanagement/fetchAccountManagementList',
-            payload: { building_id: selectedBuildingId, page: this.state.page, ...params },
+            payload: { building_id: selectedBuildingId, page: this.state.page, pageSize: this.state.pageSize, ...params },
         });
     }
 
@@ -310,8 +310,8 @@ class AccountManagement extends React.Component {
             <Form onSubmit={this.onSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                      
-        <Col md={6} sm={24}>
-            
+            <Col md={6} sm={24}>
+                
         <Form.Item label={formatMessage({ id: 'AccountManagement.username' })}>
             {getFieldDecorator('username', {
                 rules: [{ required: false }],
@@ -319,10 +319,10 @@ class AccountManagement extends React.Component {
             })(<Input placeholder={formatMessage({ id: 'common.input' })} style={{ width: '100%' }} />)}
         </Form.Item>
     
-        </Col>
-     
-        <Col md={6} sm={24}>
-            
+            </Col>
+         
+            <Col md={6} sm={24}>
+                
         <Form.Item label={formatMessage({ id: 'AccountManagement.roles' })}>
             {getFieldDecorator('roles', {
                 rules: [{ required: false }],
@@ -338,10 +338,10 @@ class AccountManagement extends React.Component {
             )}
         </Form.Item>
     
-        </Col>
-     
-        <Col md={6} sm={24}>
-            
+            </Col>
+         
+            <Col md={6} sm={24}>
+                
         <Form.Item label={formatMessage({ id: 'AccountManagement.auth' })}>
             {getFieldDecorator('auth', {
                 rules: [{ required: false }],
@@ -357,8 +357,8 @@ class AccountManagement extends React.Component {
             )}
         </Form.Item>
     
-        </Col>
-    
+            </Col>
+        
                     <Col md={6} sm={24}>
                         <span>
                             <Button type="primary" onClick={this.onSearch}>
@@ -400,6 +400,26 @@ class AccountManagement extends React.Component {
         const self = this;
         console.log('data', data);
         const { current } = this.state;
+
+        const paginationProps = {
+            showSizeChanger: true,
+            showQuickJumper: true,
+            pageSize: this.state.pageSize,
+            current: this.state.page,
+            total,
+            onChange: (page, _) => {
+                this.setState({ page }, () => {
+                    this.onSearch();
+                });
+            },
+            onShowSizeChange: (_, pageSize) => {
+                this.setState({ pageSize }, () => {
+                    this.onSearch();
+                });
+            },
+            pageSizeOptions: ['3', '5', '10'],
+        };
+
         return (
             <GridContent>
                 <Card bordered={false}>
@@ -409,26 +429,20 @@ class AccountManagement extends React.Component {
                             loading={loading}
                             dataSource={data}
                             columns={this.columns}
-                            pagination={{
-                                pageSize: this.state.pageSize,
-                                current: this.state.page,
-                                total,
-                                onChange: v => {
-                                    this.setState({ page: v }, () => {
-                                        this.onSearch();
-                                    });
-                                },
-                            }}
+                            pagination={paginationProps}
                         />
                     </div>
                 </Card>
                 <Modal
                     visible={this.state.createOrUpdateModalVisible}
+                    closable={false}
                     footer={[
                         <Button
                           key="0"
                           onClick={() => {
                             this.setState({ createOrUpdateModalVisible: false, current: {} });
+                            const form = this.wrappedCreateOrUpdateAccountFormRef.current;
+                            form && form.resetFields();
                         }}
                         >
                           {formatMessage({ id: 'common.cancel' })}
@@ -445,6 +459,7 @@ class AccountManagement extends React.Component {
                 >
                     <WrappedCreateOrUpdateAccountForm
                         current={current}
+                        key={current.id ? current.id : 'id-for-creation'}
                         ref={this.wrappedCreateOrUpdateAccountFormRef}
                     />
                 </Modal>

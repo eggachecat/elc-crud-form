@@ -199,7 +199,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         } = this.props;
         dispatch({
             type: '%{__ELC_CRUD__MODEL}%/fetch%{__ELC_CRUD__NAME}%List',
-            payload: { building_id: selectedBuildingId, page: this.state.page, ...params },
+            payload: { building_id: selectedBuildingId, page: this.state.page, pageSize: this.state.pageSize, ...params },
         });
     }
 
@@ -253,6 +253,26 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
         const self = this;
         console.log('data', data);
         const { current } = this.state;
+
+        const paginationProps = {
+            showSizeChanger: true,
+            showQuickJumper: true,
+            pageSize: this.state.pageSize,
+            current: this.state.page,
+            total,
+            onChange: (page, _) => {
+                this.setState({ page }, () => {
+                    this.onSearch();
+                });
+            },
+            onShowSizeChange: (_, pageSize) => {
+                this.setState({ pageSize }, () => {
+                    this.onSearch();
+                });
+            },
+            pageSizeOptions: ['3', '5', '10'],
+        };
+
         return (
             <GridContent>
                 <Card bordered={false}>
@@ -262,26 +282,20 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                             loading={loading}
                             dataSource={data}
                             columns={this.columns}
-                            pagination={{
-                                pageSize: this.state.pageSize,
-                                current: this.state.page,
-                                total,
-                                onChange: v => {
-                                    this.setState({ page: v }, () => {
-                                        this.onSearch();
-                                    });
-                                },
-                            }}
+                            pagination={paginationProps}
                         />
                     </div>
                 </Card>
                 <Modal
                     visible={this.state.createOrUpdateModalVisible}
+                    closable={false}
                     footer={[
                         <Button
                           key="0"
                           onClick={() => {
                             this.setState({ createOrUpdateModalVisible: false, current: {} });
+                            const form = this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref.current;
+                            form && form.resetFields();
                         }}
                         >
                           {formatMessage({ id: 'common.cancel' })}
@@ -298,6 +312,7 @@ class %{__ELC_CRUD__CLASS_NAME}% extends React.Component {
                 >
                     <Wrapped%{__ELC_CRUD__VARIABLE_FORM}%
                         current={current}
+                        key={current.id ? current.id : 'id-for-creation'}
                         ref={this.wrapped%{__ELC_CRUD__VARIABLE_FORM}%Ref}
                     />
                 </Modal>

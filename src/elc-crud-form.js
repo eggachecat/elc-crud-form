@@ -201,7 +201,7 @@ function generateSearchForm(row) {
                 return createFormItemText({ ...row })
         }
     }
-    return ""
+    return null
 }
 
 function generateCreateOrUpdateForm(row) {
@@ -257,11 +257,17 @@ function generate(file) {
     console.log({ ...global_dict, baseFolder: baseFolder, ...config, __dirname, current_folder: cwd })
 
     global_dict.__ELC_CRUD__COLUMNS = configs.map(config => generateColumn({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
-    global_dict.__ELC_CRUD__SEARCH_FORM = configs.map(config => ` 
-        <Col md={6} sm={24}>
-            ${generateSearchForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })}
-        </Col>
-    `).join("")
+    global_dict.__ELC_CRUD__SEARCH_FORM = configs.map(config => {
+        const formCol = generateSearchForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })
+        if (formCol === null) {
+            return ""
+        }
+        return ` 
+            <Col md={6} sm={24}>
+                ${formCol}
+            </Col>
+        `
+    }).join("")
     global_dict.__ELC_CRUD__CREATE_OR_UPDATE_FORM_ITEMS = configs.map(config => generateCreateOrUpdateForm({ prefix: global_dict.__ELC_CRUD__NAME, ...config })).join("")
 
     console.log("Generating page template....")

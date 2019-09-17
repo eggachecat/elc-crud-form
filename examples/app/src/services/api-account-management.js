@@ -1,89 +1,7 @@
-/*
-const mock_results = [
-    {
-  "username": "0.4016082399005265",
-  "roles": [
-    "0",
-    "0"
-  ],
-  "auth": [
-    "series",
-    "series"
-  ]
-},
-    {
-  "username": "0.4016082399005265",
-  "roles": [
-    "0",
-    "0"
-  ],
-  "auth": [
-    "series",
-    "series"
-  ]
-},
-    {
-  "username": "0.4016082399005265",
-  "roles": [
-    "0",
-    "0"
-  ],
-  "auth": [
-    "series",
-    "series"
-  ]
-},
-    {
-  "username": "0.4016082399005265",
-  "roles": [
-    "0",
-    "0"
-  ],
-  "auth": [
-    "series",
-    "series"
-  ]
-},
-    {
-  "username": "0.4016082399005265",
-  "roles": [
-    "0",
-    "0"
-  ],
-  "auth": [
-    "series",
-    "series"
-  ]
-},
-    {
-  "username": "0.4016082399005265",
-  "roles": [
-    "0",
-    "0"
-  ],
-  "auth": [
-    "series",
-    "series"
-  ]
-},
-    {
-  "username": "0.4016082399005265",
-  "roles": [
-    "0",
-    "0"
-  ],
-  "auth": [
-    "series",
-    "series"
-  ]
-},
-]
-*/
-
 const mock_results = [
   {
     "id": 0,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -95,7 +13,7 @@ const mock_results = [
   },
   {
     "id": 1,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -107,7 +25,7 @@ const mock_results = [
   },
   {
     "id": 2,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -119,7 +37,7 @@ const mock_results = [
   },
   {
     "id": 3,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -131,7 +49,7 @@ const mock_results = [
   },
   {
     "id": 4,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -143,7 +61,7 @@ const mock_results = [
   },
   {
     "id": 5,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -155,7 +73,7 @@ const mock_results = [
   },
   {
     "id": 6,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -167,7 +85,7 @@ const mock_results = [
   },
   {
     "id": 7,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -179,7 +97,7 @@ const mock_results = [
   },
   {
     "id": 8,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
@@ -191,7 +109,7 @@ const mock_results = [
   },
   {
     "id": 9,
-    "username": "0.4016082399005265",
+    "username": "0.6359557700939702",
     "roles": [
       "0",
       "0"
